@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 import MarvelServise from '../../services/MarvelServise';
 import PropTypes from 'prop-types';
 
@@ -6,65 +6,48 @@ import Spinner from "../spinner/Spinner";
 
 import './charList.scss';
 
-class CharList extends Component {
+const CharList = ({onSelectingChar}) => {
 
 
-    service = new MarvelServise()
+    const service = new MarvelServise()
 
-    state = {
-        offset: 210,
-        addingLoading: false,
-        isEnded: false,
-        loading: true,
-        charactersList: [],
-    }
+    let [offset, setOffset] = useState(210);
+    let [addingLoading, setAddingLoading] = useState(false)
+    let [isEnded, setIsEnded] = useState(false)
+    let [loading, setLoading] = useState(true)
+    let [charactersList, setCharactersList] = useState([])
 
-    componentDidMount() {
-        this.setCharacters()
-    }
-
-    setNewOffset = () => {
-        let {offset} = this.state
-        this.setState( () => {
-            return {
-                offset: offset + 9,
-                addingLoading: true,
-            }
-        }, () => {
-            this.setCharacters();
-        })
-    }
-
-    setCharacters = () => {
-        let {offset} = this.state
-        this.charactersData = this.service.getNCharatersInInterval(9, offset)
-        
+    const setCharacters = () => {
+        service.getNCharatersInInterval(9, offset)
         .then(res => {
-            this.setState(({charactersList}) => ({
-                charactersList: [...charactersList, ...res],
-                addingLoading: false,
-                loading: false,
-                isEnded: (res.length < 9)
-            }))
+            setCharactersList(charactersList => [...charactersList, ...res]);
+            setAddingLoading(false);
+            setLoading(false);
+            setOffset(offset => offset + 9)
+            setIsEnded(res.length < 9)
         })
     }
-    
-    render(){
-        let {onSelectingChar} = this.props
-        let {charactersList, loading, addingLoading, isEnded} = this.state;
+
+    const setNewOffset = () => {
+        setAddingLoading(true)
+        setCharacters();
+    }
+
+    useEffect(setCharacters, [])
+
+
+
         let result = loading ? <Spinner/> : <CharactersCards charactersList={charactersList} onSelectingChar={onSelectingChar}/>
         return (
             <div className="char__list">
                     {result}
                 <button disabled={addingLoading} style={{display: (isEnded)? "none" : null}}
                 className="button button__main button__long"
-                onClick={this.setNewOffset}>
+                onClick={setNewOffset}>
                     <div className="inner">load more</div>
                 </button>
             </div>
         )
-    }
-
 }
 
 const CharactersCards = ({charactersList,  onSelectingChar}) => {
@@ -94,42 +77,3 @@ CharList.propTypes = {
 
 
 export default CharList;
-
-
-
-/*             <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item char__item_selected">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss"/>
-                    <div className="char__name">Abyss</div>
-                </li> */

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 
 import './randomChar.scss';
 //import thor from '../../resources/img/thor.jpeg';
@@ -10,25 +10,21 @@ import ErrorMessage from "../errorMessage/ErrorMessage"
 import MarvelServise from "../../services/MarvelServise";
 
 
-class RandomChar extends Component {
+const RandomChar = () => {
 
-    service = new MarvelServise();
+    let service = new MarvelServise();
 
-    state = {
-        char: {},
-        loading: true,
-        error: false
-    }
+    let [char, setChar] = useState(null);
+    let [loading, setLoading] = useState(true);
+    let [error, setError] = useState(false)
 
-    componentDidMount() {
-        this.onSetRandomCharacter();
-    } 
+    useEffect(onSetRandomCharacter, [])
 
-    getRandomArbitrary = (min, max) => {
+    function getRandomArbitrary(min, max) {
         return Math.round(Math.random() * (max - min) + min);
     } 
 
-    limitTextLength = (str, maxLength) => {
+    function limitTextLength(str, maxLength){
         if(str.length > maxLength){
             return str.slice(0, maxLength) + "..."
         } else if (str === ""){
@@ -38,69 +34,62 @@ class RandomChar extends Component {
         }
     }
 
-    onCharLoading = () => {
-        this.setState({
-            loading: true,
+    function onCharLoading(){
+        setLoading(true);
+    }
+
+    function onCharLoaded(char){
+
+        setChar({
+            ...char,
+            description: limitTextLength(char.description, 210),
         })
+        setLoading(false);
+        setError(false);
     }
 
-    onCharLoaded = (char) => {
-        this.setState({
-            char: {
-                ...char,
-                description: this.limitTextLength(char.description, 210),
-            },
-            loading: false,
-            error: false
-        })
+    function onError() {
+        setLoading(false);
+        setError(true)
     }
 
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
+    function onSetRandomCharacter() {
+        let id = getRandomArbitrary(1011000, 1011400)
+        onCharLoading()
+        service.getCharacter(id)
+        .then(onCharLoaded)
+        .catch(onError)
     }
 
-    onSetRandomCharacter = () => {
-        let id = this.getRandomArbitrary(1011000, 1011400)
-        this.onCharLoading()
-        this.service.getCharacter(id)
-        .then(this.onCharLoaded)
-        .catch(this.onError)
-    }
+    let errorMessage = (error && !loading) ? <ErrorMessage/> : null;
+    let spinner = loading ? <Spinner/> : null;
+    let character = !(loading || error)? <CharPreview char={char}/> : null;
 
-    render() {
-        let {char, loading, error} = this.state;
-        let errorMessage = (error && !loading) ? <ErrorMessage/> : null;
-        let spinner = loading ? <Spinner/> : null;
-        let character = !(loading || error)? <CharPreview char={char}/> : null;
-        return (
-            <div className="randomchar">
-                {errorMessage}
-                {spinner}
-                {character}
-                <div className="randomchar__static">
-                    <p className="randomchar__title">
-                        Random character for today!<br/>
-                        Do you want to get to know him better?
-                    </p>
-                    <p className="randomchar__title">
-                        Or choose another one
-                    </p>
-                    <button tabIndex={6}
-                    className="button button__main"
-                    onClick={(e) => {
-                                e.preventDefault();
-                                this.onSetRandomCharacter()  
-                            }}>
-                        <div className="inner">try it</div>
-                    </button>
-                    <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
-                </div>
+    return (
+        <div className="randomchar">
+            {errorMessage}
+            {spinner}
+            {character}
+            <div className="randomchar__static">
+                <p className="randomchar__title">
+                    Random character for today!<br/>
+                    Do you want to get to know him better?
+                </p>
+                <p className="randomchar__title">
+                    Or choose another one
+                </p>
+                <button tabIndex={6}
+                className="button button__main"
+                onClick={(e) => {
+                            e.preventDefault();
+                            onSetRandomCharacter()  
+                        }}>
+                    <div className="inner">try it</div>
+                </button>
+                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 const CharPreview = ({char}) => {

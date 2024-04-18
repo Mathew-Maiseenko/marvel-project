@@ -7,6 +7,7 @@ class MarvelServise {
 
 
     getResourse = async (url) => {
+        console.log("feaching...");
         const res = await fetch(url);
 
         if (!res.ok) {

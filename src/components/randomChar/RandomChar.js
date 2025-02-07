@@ -7,16 +7,17 @@ import mjolnir from '../../resources/img/mjolnir.png';
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage"
 
-import MarvelServise from "../../services/MarvelServise";
+import useMarvelServise from "../../services/MarvelServise";
 
 
 const RandomChar = () => {
 
-    let service = new MarvelServise();
+    //let service = useMarvelServise();
+    let  {getCharacter, loading, error, clearError} = useMarvelServise();
 
     let [char, setChar] = useState(null);
-    let [loading, setLoading] = useState(true);
-    let [error, setError] = useState(false)
+    // let [loading, setLoading] = useState(true);
+    // let [error, setError] = useState(false)
 
     useEffect(onSetRandomCharacter, [])
 
@@ -34,9 +35,9 @@ const RandomChar = () => {
         }
     }
 
-    function onCharLoading(){
-        setLoading(true);
-    }
+    // function onCharLoading(){
+    //     setLoading(true);
+    // }
 
     function onCharLoaded(char){
 
@@ -44,26 +45,27 @@ const RandomChar = () => {
             ...char,
             description: limitTextLength(char.description, 210),
         })
-        setLoading(false);
-        setError(false);
+        // setLoading(false);
+        // setError(false);
     }
 
-    function onError() {
-        setLoading(false);
-        setError(true)
-    }
+    // function onError() {
+    //     // setLoading(false);
+    //     setError(true)
+    // }
 
     function onSetRandomCharacter() {
+        clearError()
         let id = getRandomArbitrary(1011000, 1011400)
-        onCharLoading()
-        service.getCharacter(id)
+        //onCharLoading()
+        getCharacter(id)
         .then(onCharLoaded)
-        .catch(onError)
+        .catch(e => console.error(e))
     }
 
-    let errorMessage = (error && !loading) ? <ErrorMessage/> : null;
+    let errorMessage = (error) ? <ErrorMessage/> : null;
     let spinner = loading ? <Spinner/> : null;
-    let character = !(loading || error)? <CharPreview char={char}/> : null;
+    let character = !(loading || error) && char? <CharPreview char={char}/> : null;
 
     return (
         <div className="randomchar">

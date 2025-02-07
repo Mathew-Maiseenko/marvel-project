@@ -1,5 +1,5 @@
 import { Component, useState, useEffect } from 'react';
-import MarvelServise from '../../services/MarvelServise';
+import useMarvelServise from '../../services/MarvelServise';
 import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
@@ -10,43 +10,45 @@ import './charInfo.scss';
 
 const CharInfo = ({selectedChar}) => {
 
-    let service = new MarvelServise()
+    let {getCharacter, error, loading, clearError, setLoading} = useMarvelServise()
 
 
     let [char, setChar] = useState(null);
-    let [loading, setLoading] = useState(false);
-    let [error, setError] = useState(false)
+    // let [error, setError] = useState(false)
 
-    useEffect(updateChar, [])
     useEffect(() => {
-        console.log("обнова");
+        updateChar();
+        setLoading(false)
+    }, [])
+
+    useEffect(() => {
+        console.log("обнова информации о персонаже...");
         updateChar()
     }, [selectedChar])
     
 
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
+    // const onError = () => {
+    //     setLoading(false);
+    //     setError(true);
+    // }
 
-    const onCharacterLoading = () => {
-        setLoading(true)
-    }
+    // const onCharacterLoading = () => {
+    //     setLoading(true)
+    // }
 
     const onCharacterLoaded = (char) => {
         setChar(char)
-        setLoading(false);
-        setError(false);
     }
 
     function updateChar(){
         if (!selectedChar) {
            return; 
         }
-        onCharacterLoading()
-        service.getCharacter(selectedChar)
+        //onCharacterLoading()
+        clearError()
+        getCharacter(selectedChar)
         .then((res) => onCharacterLoaded(res))
-        .catch(onError)
+        //.catch(onError)
     }
 
     let skeleton = (loading || char || error) ? null : <Skeleton/>;

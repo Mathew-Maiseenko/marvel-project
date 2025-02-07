@@ -22,6 +22,14 @@
             line-height: 32px;
             li {
                 margin: 0 8px;
+                .link_activated {
+                    color: $main-color;
+                    filter: grayscale(.4);
+
+                    &:hover {
+                        filter: grayscale(0);
+                    }
+                }
                 a:hover {
                     color: $main-color;
                 }

@@ -1,38 +1,48 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from 'react'
 
 const useHttp = () => {
-    let [error, setError] = useState(false)
-    let [loading, setLoading] = useState(true);
+	let [error, setError] = useState(false)
+	let [loading, setLoading] = useState(true)
 
-    const setRequest = useCallback( async (url, method = 'GET', body = null, 
-    headers = {"Content-Type" : "application/json"}) => {
-        setLoading(true);
-        console.log("...feaching");
+	const setRequest = useCallback(
+		async (
+			url,
+			method = 'GET',
+			body = null,
+			headers = { 'Content-Type': 'application/json' }
+		) => {
+			setLoading(true)
+			console.log('...fetching')
 
-        try {
-            let response = await fetch(url, {method, body, headers})
+			try {
+				let response = await fetch(url, { method, body, headers })
 
-            if (!(response.ok) ) {
-                //console.error(`Problem with feacting on ${url}, status: ${response.status}`)
-                throw new Error(`Problem with feacting on ${url}, status: ${response.status}`)
-            }
+				if (!response.ok) {
+					throw new Error(
+						`Problem with fetching on ${url}, status: ${response.status}`
+					)
+				}
 
-            const data = response.json()
-            setLoading(false);
+				const data = response.json()
+				console.log(data)
 
-            return data
-        } catch(er) {
-            setError(true);
-            setLoading(false);
-            throw er
-        }
-    }, [])
+				setLoading(false)
 
-    const clearError = useCallback(() => {
-        setError(false);
-    }, [])
+				return data
+			} catch (er) {
+				setError(true)
+				setLoading(false)
+				throw er
+			}
+		},
+		[]
+	)
 
-    return {loading, setRequest, error, clearError, setLoading}
+	const clearError = useCallback(() => {
+		setError(false)
+	}, [])
+
+	return { loading, setRequest, error, clearError, setLoading }
 }
 
 export default useHttp

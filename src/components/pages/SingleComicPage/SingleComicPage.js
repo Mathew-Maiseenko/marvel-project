@@ -40,23 +40,23 @@ const SingleComicInfo = ({
 	price = +price.slice(0, -1)
 
 	return (
-		<div className='single-comic'>
+		<article className='single-comic'>
 			<img src={thumbnail} alt={title} className='single-comic__img' />
-			<div className='single-comic__info'>
+			<section className='single-comic__info'>
 				<h2 className='single-comic__name'>{title}</h2>
 				<p className='single-comic__descr'>
 					{description ? description : 'There is no description here...'}
 				</p>
 				<p className='single-comic__descr'>{pageCount}</p>
 				<p className='single-comic__descr'>{`Language: ${language}`}</p>
-				<div className='single-comic__price'>
+				<h3 className='single-comic__price'>
 					{price ? `${price}$` : 'There is no information about price...'}
-				</div>
-			</div>
+				</h3>
+			</section>
 			<Link to='/comics' className='single-comic__back'>
 				Back to all
 			</Link>
-		</div>
+		</article>
 	)
 }
 

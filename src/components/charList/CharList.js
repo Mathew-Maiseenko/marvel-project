@@ -6,43 +6,34 @@ import Spinner from '../spinner/Spinner'
 
 import './charList.scss'
 
-function useSelfHook(initialValue) {
-	let [value, setValue] = useState(initialValue)
-
-	return { value, setValue }
-}
-
 const CharList = ({ onSelectingChar }) => {
 	const { getNCharactersInInterval, loading } = useMarvelService()
-	//const service = useMarvelService()
 
-	let offset = useSelfHook(210)
-	let addingLoading = useSelfHook(false)
-	let isEnded = useSelfHook(false)
-	//let loading = useSelfHook(true);
-	let charactersList = useSelfHook([])
+	let [offset, setOffset] = useState(210)
+	let [addingLoading, setAddingLoading] = useState(false)
+	let [isEnded, setIsEnded] = useState(false)
+	let [charactersList, setCharactersList] = useState([])
 
 	const setCharacters = () => {
-		getNCharactersInInterval(9, offset.value).then(res => {
-			charactersList.setValue(charactersList => [...charactersList, ...res])
-			addingLoading.setValue(false)
-			//loading.setValue(false);
-			offset.setValue(offset => offset + 9)
-			isEnded.setValue(res.length < 9)
+		getNCharactersInInterval(9, offset).then(res => {
+			setCharactersList(charactersList => [...charactersList, ...res])
+			setAddingLoading(false)
+			setOffset(offset => offset + 9)
+			setIsEnded(res.length < 9)
 		})
 	}
 
 	const setNewOffset = () => {
-		addingLoading.setValue(true)
+		setAddingLoading(true)
 		setCharacters()
 	}
 
 	useEffect(setCharacters, [])
 
-	let Load = loading && !addingLoading.value ? <Spinner /> : null
+	let Load = loading && !addingLoading ? <Spinner /> : null
 	let result = (
 		<CharactersCards
-			charactersList={charactersList.value}
+			charactersList={charactersList}
 			onSelectingChar={onSelectingChar}
 		/>
 	)
@@ -52,8 +43,8 @@ const CharList = ({ onSelectingChar }) => {
 			{result}
 			{!loading && (
 				<button
-					disabled={addingLoading.value}
-					style={{ display: isEnded.value ? 'none' : null }}
+					disabled={addingLoading}
+					style={{ display: isEnded ? 'none' : null }}
 					className='button button__main button__long'
 					onClick={setNewOffset}
 				>
@@ -102,6 +93,4 @@ const CharactersCards = ({ charactersList, onSelectingChar }) => {
 CharList.propTypes = {
 	onSelectingChar: PropTypes.func.isRequired,
 }
-
-export { useSelfHook }
 export default CharList

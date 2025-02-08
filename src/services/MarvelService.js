@@ -62,27 +62,6 @@ const useMarvelService = () => {
 		return _getParams(res.data.results[0])
 	}
 
-	// const _getComicsParams = (comic) => ({
-	//     title: comic.title,
-	//     url: comic.urls[0].url,
-	//     description: comic.description,
-	//     thumbnail: comic.thumbnail.path + "." + comic.thumbnail.extension,
-	//     price: (comic.prices[0] ? `${comic.prices[0].price}$` : "There is no information about price..."),
-	//     id: comic.id,
-	//     pageCount: (comic.pageCount ? comic.pageCount : "There is no information about this..."),
-	//     language: (comic.textObjects[0] ? comic.textObjects.language : "There is no information about this..."),
-	// })
-
-	// const _getParams = (char) => ({
-	//     name: char.name,
-	//     description: char.description,
-	//     thumbnail: char.thumbnail.path + "." + char.thumbnail.extension,
-	//     homepage: char.urls[0].url,
-	//     wiki: char.urls[1].url,
-	//     id: char.id,
-	//     comics: char.comics.items
-	// })
-
 	return {
 		getCharacter,
 		getNCharactersInInterval,

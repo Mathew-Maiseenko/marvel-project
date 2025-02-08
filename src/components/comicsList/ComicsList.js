@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelfHook } from '../charList/CharList'
 
 import './comicsList.scss'
 
@@ -11,8 +10,8 @@ import Spinner from '../spinner/Spinner'
 const ComicsList = () => {
 	let { getNComicsInInterval, loading, error, clearError } = useMarvelService()
 
-	let comicsList = useSelfHook([])
-	let offset = useSelfHook(0)
+	let [comicsList, setComicsList] = useState([])
+	let [offset, setOffset] = useState(0)
 
 	useEffect(() => {
 		onLoadNewComics()
@@ -20,20 +19,18 @@ const ComicsList = () => {
 
 	function onLoadNewComics() {
 		clearError()
-		getNComicsInInterval(8, offset.value)
-			.then(offset.setValue(offset => offset + 8))
-			.then(response => comicsList.setValue(comics => [...comics, ...response]))
+		getNComicsInInterval(8, offset)
+			.then(setOffset(offset => offset + 8))
+			.then(response => setComicsList(comics => [...comics, ...response]))
 	}
 
-	let renderComicsList = error ? null : (
-		<ComicsCards comicsList={comicsList.value} />
-	)
+	let renderComicsList = error ? null : <ComicsCards comicsList={comicsList} />
 	let spinner =
-		loading && !error && comicsList.value.length === 0 ? <Spinner /> : null
+		loading && !error && comicsList.length === 0 ? <Spinner /> : null
 	let errorMessage = error && !loading ? <ErrorMessage /> : null
 
 	return (
-		<div className='comics__list'>
+		<article className='comics__list'>
 			{renderComicsList}
 			{spinner}
 			{errorMessage}
@@ -47,7 +44,7 @@ const ComicsList = () => {
 					<div className='inner'>load more</div>
 				</button>
 			)}
-		</div>
+		</article>
 	)
 }
 

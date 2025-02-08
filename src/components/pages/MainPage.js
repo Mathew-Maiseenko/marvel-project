@@ -1,37 +1,35 @@
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import CharInfo from '../charInfo/CharInfo'
+import CharList from '../charList/CharList'
+import ErrorBoundary from '../errorBoundary/ErrorBoundary'
+import RandomChar from '../randomChar/RandomChar'
 
-import decoration from '../../resources/img/vision.png';
-import {useState} from "react";
+import { useState } from 'react'
+import decoration from '../../resources/img/vision.png'
 
 const MainPage = () => {
+	let [selectedChar, setSelectedChar] = useState(null)
 
-    let [selectedChar, setSelectedChar] = useState(null)
+	function onSelectingChar(id) {
+		setSelectedChar(id)
+	}
 
-    function onSelectingChar(id) {
-        setSelectedChar(id);
-    }
+	return (
+		<>
+			<ErrorBoundary>
+				<RandomChar />
+			</ErrorBoundary>
+			<article className='char__content'>
+				<ErrorBoundary>
+					<CharList onSelectingChar={onSelectingChar} />
+				</ErrorBoundary>
 
-
-    return (
-        <>
-            <ErrorBoundary>
-                <RandomChar/>
-            </ErrorBoundary>
-            <div className="char__content">
-                <ErrorBoundary>
-                    <CharList onSelectingChar={onSelectingChar}/>
-                </ErrorBoundary>
-
-                <ErrorBoundary>
-                    <CharInfo selectedChar={selectedChar}/>
-                </ErrorBoundary>
-            </div>
-            <img className="bg-decoration" src={decoration} alt="vision"/>
-        </>
-    )
+				<ErrorBoundary>
+					<CharInfo selectedChar={selectedChar} />
+				</ErrorBoundary>
+			</article>
+			<img className='bg-decoration' src={decoration} alt='vision' />
+		</>
+	)
 }
 
-export default MainPage;
+export default MainPage

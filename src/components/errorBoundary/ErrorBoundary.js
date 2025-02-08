@@ -1,22 +1,22 @@
-import ErrorMessage from "../errorMessage/ErrorMessage";
-import { Component } from "react";
+import { Component } from 'react'
+import ErrorMessage from '../errorMessage/ErrorMessage'
 
 class ErrorBoundary extends Component {
-    state = {
-        error: false
-    }
+	state = {
+		error: false,
+	}
 
-    componentDidCatch(error, errorInfo) {
-        console.log(error, errorInfo);
-        this.setState({
-            error: true
-        })
-    }
+	componentDidCatch(error, errorInfo) {
+		console.log(error, errorInfo)
+		this.setState({
+			error: true,
+		})
+	}
 
-    render() {
-        let {error} = this.state
-        return error ? <ErrorMessage/> : this.props.children;
-    }
+	render() {
+		let { error } = this.state
+		return error ? <ErrorMessage /> : this.props.children
+	}
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary
